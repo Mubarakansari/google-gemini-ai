@@ -1,0 +1,1 @@
+This project is a conversational AI application designed to function similarly to ChatGPT. It leverages natural language processing (NLP) to provide intelligent and context-aware responses to user queries. The chatbot is built to assist with tasks, answer questions, and engage in human-like conversations.

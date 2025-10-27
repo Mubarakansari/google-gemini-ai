@@ -4,6 +4,7 @@ import com.AIService.dto.ActivityAnalysisResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -12,7 +13,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("ai")
-
+@Slf4j
 public class AiController {
     private final WebClient webClient;
     private static final String geminiApiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent";
@@ -20,6 +21,15 @@ public class AiController {
 
     public AiController(WebClient webClient) {
         this.webClient = webClient;
+    }
+
+    @GetMapping("/check-log")
+    public String checkLog() {
+        log.info("🔄 Info Log call...");
+        log.warn("⚠️Warning Log call...");
+        log.error("❌ Error Log call...");
+        log.debug("🔍  Debug Log call...");
+        return "All Log create successfully";
     }
 
     @PostMapping("prompt/message")
@@ -46,12 +56,13 @@ public class AiController {
         JsonNode textNode = rootNode.path("candidates").get(0).path("content").path("parts").get(0).path("text");
         String jsonContent = textNode.asText().replaceAll("```json\\n", "").replaceAll("\\n", "").trim();
         JsonNode jsonResponse = objectMapper.readTree(jsonContent);
-        System.out.println("jsonResponse>>" + jsonResponse);
+        log.info("jsonResponse {} >>", jsonResponse);
         ActivityAnalysisResponse response = objectMapper.readValue(jsonResponse.toString(), ActivityAnalysisResponse.class);
-        System.out.println("Analysis>>" + response.analysis());
-        System.out.println("improvements>>" + response.improvements());
-        System.out.println("safety>>" + response.safety());
-        System.out.println("suggestions>>" + response.suggestions());
+        log.warn("Analysis {} >>", response.analysis());
+        log.error("improvements {} >>", response.improvements());
+        log.info("safety>> {} ", response.safety());
+        log.debug("suggestions {} >>", response.suggestions());
+        log.trace("trace {} >>", response);
         return response;
 
     }
